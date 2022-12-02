@@ -38,17 +38,18 @@ for (i in 2:n){
       t <- rdunif(1, i, 1) # genera un indice tra quelli disponibili
       while (J[t]==0){
         t <- rdunif(1, i, 1)
+        # rifalla finché non ho un valore non contaminante
       }
       
       # 3: non contaminante, freq 1
-      if ((COUNT == 1) ){ # se quel valore l'ho già incontrato solo una volta
+      if ((length(X[X == X[t]]))==1){ # se quel valore l'ho già incontrato solo una volta
         X[i] <- X[t]
         m1 <- m1-1
         J[i] <- 1
       }
 
       # 4: non contaminante, freq > 1
-      if (COUNT > 1){ # se quel valore l'ho già incontrato più volte
+      if (((length(X[X == X[t]]))>1)){ # se quel valore l'ho già incontrato più volte
         X[i] <- X[t]
         J[i] <- 1
       }
