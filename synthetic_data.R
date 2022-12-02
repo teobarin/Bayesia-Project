@@ -51,11 +51,12 @@ for (i in 2:n){
         m1 <- m1-1
         J[i] <- 1
       }
-      
+      else{
       # 4: non contaminante, freq > 1
       if (((length(which(X == X[t])))>1)){ # se quel valore l'ho già incontrato più volte
         X[i] <- X[t]
         J[i] <- 1
+      }
       }
       
     }
@@ -95,8 +96,8 @@ m1 = m1_cont + m1_no_cont
 # numero di gruppi
 k = m1 + length(N_k)
 
-N_k
-m1
-k
 
-save(X, file = "vec.RData")
+par = list(n=n,m1=m1,m1_bar=m1_cont,N_k=N_k,k=k)
+par
+
+save(par, file = "par.RData")
