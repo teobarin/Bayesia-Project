@@ -96,8 +96,8 @@ m1 = m1_cont + m1_no_cont
 # numero di gruppi
 k = m1 + length(N_k)
 
-
-par = list(n=n,m1=m1,m1_bar=m1_cont,N_k=N_k,k=k)
+# salvo tutti i parametri che mi servono per controllare se il modello funziona
+par = list(n=n,m1=m1,m1_bar=m1_cont,N_k=N_k,k=k,beta=beta,sigma=sigma,theta=theta)
 par
 
 save(par, file = "par.RData")
