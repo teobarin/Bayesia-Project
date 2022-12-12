@@ -183,10 +183,10 @@ for (i in 1:R){
   
   beta_new = rbeta(1, a$beta + n - m1_bar_old, b$beta + m1_bar_old)
   
-  # m1_bar_new = exp(lchoose(m1,m1_bar_old)) * beta_new^(n-m1_bar_old) * (1-beta_new)^(m1_bar_old) *
-  #              (exp(psi_new)/(1+exp(psi_new)))^(k-m1_bar_old) * 
-  #              exp(lgamma((exp(lambda_new)/exp(psi_new)) + exp(lambda_new) + k - m1_bar_old) -
-  #              lgamma(exp(lambda_new) + n - m1_bar_old))
+#  m1_bar_new = exp(lchoose(m1,m1_bar_old) + (n-m1_bar_old)*log(beta_new) + (m1_bar_old)*(1-beta_new)) *
+#               (exp(psi_new)/(1+exp(psi_new)))^(k-m1_bar_old) * 
+#               exp(lgamma((exp(lambda_new)/exp(psi_new)) + exp(lambda_new) + k - m1_bar_old) -
+#               lgamma(exp(lambda_new) + n - m1_bar_old))
   
   
   psi_vec_2[i] = psi_new
