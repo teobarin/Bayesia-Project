@@ -51,31 +51,33 @@
 #
 ################################################################################
 # RECUPERO n,k,m1_bar DA DATASET
-library(readxl)
-library(dplyr)
-data = read_excel("Dataset.xlsx")
-n = dim(data)[1]
-
-subset = count(data,verbatimScientificName)
-ind = which(subset$n==1)
-m1 = length(ind)
-
-N_k = subset$n
-N_k = sort(N_k)
-k = length(N_k)
-# Valori paper
-# n=131204
-# k=619
-# m1=296
-
-m1_bar <- round(runif(1,0,m1),digits=0)
-
-
+# data = read_excel("Dataset.xlsx")
+# n = dim(data)[1]
+# subset = count(data,verbatimScientificName)
+# ind = which(subset$n==1)
+# m1 = length(ind)
+# N_k = subset$n
+# N_k = sort(N_k)
+# k = length(N_k)
+# m1_bar <- round(runif(1,0,m1),digits=0)
 #sigma <- 0.17
 #psi <- log(sigma)-log(1-sigma)
-
 #theta <- 25
 #lambda <- log(theta)
+
+library(dplyr)
+
+load("par.RData")
+n = par$n
+k = par$k
+N_k = par$N_k
+
+m1 = par$m1
+m1_bar = par$m1_bar
+
+sigma = par$sigma
+theta = par$theta
+beta = par$beta
 
 a <- list(theta = 2, sigma = 1, beta=1)
 b <- list(theta = 0.02, sigma = 1, beta=1)
@@ -85,7 +87,7 @@ b <- list(theta = 0.02, sigma = 1, beta=1)
 f_psi = function(lambda,psi,m1_bar){
   S=0
   for(j in 1:(k-m1)){
-    temp = lgamma(N_k[j+m1] - (exp(psi)/(1 + exp(psi)))) - lgamma(1/(1+exp(psi)))
+    temp = lgamma(N_k[j] - (exp(psi)/(1 + exp(psi)))) - lgamma(1/(1+exp(psi)))
     S = S + temp
   }
   
@@ -110,12 +112,12 @@ mh_psi = function(R,alpha,lambda,psi,m1_bar){
     
     if(runif(1) < A){
       psi = psi_s
-      accept = accept+1
+      accept = accept + 1
     }
     psi_vec[i] = psi
   }
   
-  return(list(a=psi_vec,b=accept))
+  return(list(a=mean(psi_vec),b=accept/R))
   
 }
 
@@ -134,7 +136,7 @@ g_lambda = function(lambda,psi,m1_bar){
 
 mh_lambda = function(R,alpha,lambda,psi,m1_bar){
   lambda_vec = numeric(R)
-   accept = 0
+  accept = 0
   
   for(i in 1:R){
     
@@ -145,12 +147,12 @@ mh_lambda = function(R,alpha,lambda,psi,m1_bar){
     
     if(runif(1) < A){
       lambda = lambda_s
-       accept = accept + 1
+      accept = accept + 1
     }
     lambda_vec[i] = lambda
   }
   
-  return(list(a=lambda_vec,b=accept))
+  return(list(a=mean(lambda_vec),b=accept/R))
   
 }
 
@@ -163,52 +165,52 @@ sigma_accept <- numeric(R)
 lambda_vec_2 <- numeric(R)
 theta_accept <- numeric(R)
 beta_vec <- numeric(R)
-m1_bar_vec <- numeric(R)
+# m1_bar_vec <- numeric(R)
 
-psi_old <- rnorm(1,log(0.5)-log(0.5),alpha$sigma)
-lambda_old <- rnorm(1,log(1),alpha$theta)
-beta_old <- rbeta(1,a$beta,b$beta)
+psi_old <- log(sigma) -  log(1-sigma)
+lambda_old <- log(theta)
+beta_old <- beta
 m1_bar_old <- m1_bar
 
 
 for (i in 1:R){
-
-psi_new = mean(mh_psi(it,alpha$sigma,lambda_old,psi_old,m1_bar_old)$a)
-sigma_accept[i] = mh_psi(it,alpha$sigma,lambda_old,psi_old,m1_bar_old)$b/it
-
-lambda_new = mean(mh_lambda(it,alpha$theta,lambda_old,psi_new,m1_bar_old)$a)
-theta_accept[i] = mh_lambda(it,alpha$theta,lambda_old,psi_new,m1_bar_old)$b/it
-
-beta_new = rbeta(1, a$beta + n - m1_bar_old, b$beta + m1_bar_old)
-
-m1_bar_new = exp(lchoose(m1,m1_bar_old)) * beta_new^(n-m1_bar_old) * (1-beta_new)^(m1_bar_old) *
-             (exp(psi_new)/(1+exp(psi_new)))^(k-m1_bar_old) * 
-             exp(lgamma((exp(lambda_new)/exp(psi_new)) + exp(lambda_new) + k - m1_bar_old) -
-             lgamma(exp(lambda_new) + n - m1_bar_old))
-             
-
-psi_vec_2[i] = psi_new
-lambda_vec_2[i] = lambda_new
-beta_vec[i] = beta_new
-m1_bar_vec[i] = m1_bar_new
-
-psi_old = psi_new
-lambda_old = lambda_new
-beta_old = beta_new
-m1_bar_old = round(m1_bar_new,digits=0)
-
+  
+  psi_new = mh_psi(it,alpha$sigma,lambda_old,psi_old,m1_bar_old)$a
+  sigma_accept[i] = mh_psi(it,alpha$sigma,lambda_old,psi_old,m1_bar_old)$b
+  
+  lambda_new = mh_lambda(it,alpha$theta,lambda_old,psi_new,m1_bar_old)$a
+  theta_accept[i] = mh_lambda(it,alpha$theta,lambda_old,psi_new,m1_bar_old)$b
+  
+  beta_new = rbeta(1, a$beta + n - m1_bar_old, b$beta + m1_bar_old)
+  
+  # m1_bar_new = exp(lchoose(m1,m1_bar_old)) * beta_new^(n-m1_bar_old) * (1-beta_new)^(m1_bar_old) *
+  #              (exp(psi_new)/(1+exp(psi_new)))^(k-m1_bar_old) * 
+  #              exp(lgamma((exp(lambda_new)/exp(psi_new)) + exp(lambda_new) + k - m1_bar_old) -
+  #              lgamma(exp(lambda_new) + n - m1_bar_old))
+  
+  
+  psi_vec_2[i] = psi_new
+  lambda_vec_2[i] = lambda_new
+  beta_vec[i] = beta_new
+  # m1_bar_vec[i] = m1_bar_new
+  
+  psi_old = psi_new
+  lambda_old = lambda_new
+  beta_old = beta_new
+  # m1_bar_old = round(m1_bar_new,digits=0)
+  
 }
 
 
 hist(psi_vec_2,100)
 hist(lambda_vec_2,100)
 hist(beta_vec,100)
-hist(m1_bar_vec,100)
+# hist(m1_bar_vec,100)
 
 plot(psi_vec_2,type="l")
 plot(lambda_vec_2,type="l")
 plot(beta_vec,type='l')
-plot(m1_bar_vec, type='l')
+# plot(m1_bar_vec, type='l')
 
 psi = mean(psi_vec_2)
 lambda = mean(lambda_vec_2)
@@ -216,8 +218,7 @@ lambda = mean(lambda_vec_2)
 sigma = exp(psi)/(1+exp(psi))
 theta = exp(lambda)
 beta = mean(beta_vec)
-m1_bar = mean(m1_bar_vec)
+# m1_bar = mean(m1_bar_vec)
 
 param = list(sigma=sigma,theta=theta,beta=beta,m1_bar=m1_bar)
 param
-
