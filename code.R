@@ -156,22 +156,44 @@ mh_lambda = function(R,alpha,lambda,psi,m1_bar){
   
 }
 
-R <- 350
-it <- 500
-alpha <- list(theta = 1.5, sigma = 0.2)
+######## FUNZIONE M1_BAR ########
+h  = function(m1_bar){
+  
+  v = lchoose(m1,m1_bar) + (n - m1_bar)*log(beta_new) + m1_bar*log(1-beta_new) +
+    (k-m1_bar)*log(exp(psi_new)/(1+exp(psi_new))) +
+    lgamma((exp(lambda_new)/exp(psi_new)) + exp(lambda_new) + k - m1_bar) - 
+    lgamma(exp(lambda_new) + n - m1_bar)
+  
+  return(v)
+  
+}
+
+up_m1_bar = function(R,m1_bar_old){
+  
+  X = sapply(0:m1,h)
+  v=numeric(R)
+  
+  for (i in 1:R){
+    v[i] = sample(x = 0:(length(X)-1), size = 1, prob = exp(X - max(X))/sum(exp(X-max(X))))
+  }
+  return (mean(v))
+}
+
+R <- 1000
+it <- 350
+alpha <- list(theta = 0.4, sigma = 0.5)
 
 psi_vec_2 <- numeric(R)
 sigma_accept <- numeric(R)
 lambda_vec_2 <- numeric(R)
 theta_accept <- numeric(R)
 beta_vec <- numeric(R)
-# m1_bar_vec <- numeric(R)
+m1_bar_vec <- numeric(R)
 
 psi_old <- log(sigma) -  log(1-sigma)
 lambda_old <- log(theta)
 beta_old <- beta
 m1_bar_old <- m1_bar
-
 
 for (i in 1:R){
   
@@ -181,23 +203,20 @@ for (i in 1:R){
   lambda_new = mh_lambda(it,alpha$theta,lambda_old,psi_new,m1_bar_old)$a
   theta_accept[i] = mh_lambda(it,alpha$theta,lambda_old,psi_new,m1_bar_old)$b
   
-  beta_new = rbeta(1, a$beta + n - m1_bar_old, b$beta + m1_bar_old)
+  beta_new =  (a$beta + n - m1_bar_old)/ (a$beta + n + b$beta)
   
-#  m1_bar_new = exp(lchoose(m1,m1_bar_old) + (n-m1_bar_old)*log(beta_new) + (m1_bar_old)*(1-beta_new)) *
-#               (exp(psi_new)/(1+exp(psi_new)))^(k-m1_bar_old) * 
-#               exp(lgamma((exp(lambda_new)/exp(psi_new)) + exp(lambda_new) + k - m1_bar_old) -
-#               lgamma(exp(lambda_new) + n - m1_bar_old))
+  m1_bar_new = up_m1_bar(it,m1_bar_old)
   
-  
+
   psi_vec_2[i] = psi_new
   lambda_vec_2[i] = lambda_new
   beta_vec[i] = beta_new
-  # m1_bar_vec[i] = m1_bar_new
+  m1_bar_vec[i] = m1_bar_new
   
   psi_old = psi_new
   lambda_old = lambda_new
   beta_old = beta_new
-  # m1_bar_old = round(m1_bar_new,digits=0)
+  m1_bar_old = round(m1_bar_new,digits=0)
   
 }
 
@@ -205,12 +224,12 @@ for (i in 1:R){
 hist(psi_vec_2,100)
 hist(lambda_vec_2,100)
 hist(beta_vec,100)
-# hist(m1_bar_vec,100)
+hist(m1_bar_vec,100)
 
 plot(psi_vec_2,type="l")
 plot(lambda_vec_2,type="l")
 plot(beta_vec,type='l')
-# plot(m1_bar_vec, type='l')
+plot(m1_bar_vec, type='l')
 
 psi = mean(psi_vec_2)
 lambda = mean(lambda_vec_2)
@@ -218,7 +237,10 @@ lambda = mean(lambda_vec_2)
 sigma = exp(psi)/(1+exp(psi))
 theta = exp(lambda)
 beta = mean(beta_vec)
-# m1_bar = mean(m1_bar_vec)
+m1_bar = mean(m1_bar_vec)
 
 param = list(sigma=sigma,theta=theta,beta=beta,m1_bar=m1_bar)
 param
+
+mean(sigma_accept)
+mean(theta_accept)
