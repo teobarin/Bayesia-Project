@@ -1,7 +1,7 @@
 library(dplyr)
 
 ## Analizzo il dataset e recupero i valori n, k, m_1
-data = read.csv(paste0("synthetic_data_", 0,".csv"), header = TRUE)
+data = read.csv(paste0("synthetic_new_", 1,".csv"), header = TRUE)
 n = dim(data)[1]
 
 subset = count(data,data[2])[2]
@@ -23,12 +23,12 @@ sigma <- 0.2
 beta <- 0.95
 
 a <- list(theta = 2, sigma = 1, beta = 1)
-b <- list(theta = 0.02, sigma = 5, beta = 1)
+b <- list(theta = 0.02, sigma = 1, beta = 1)
 
-psi <- log(sigma) - log(1-sigma)
+psi <- log(sigma) - log(1 - sigma)
 lambda <- log(theta)
 
-alpha <- list(theta = 0.4, sigma = 0.5)
+alpha <- list(theta = 0.4, sigma = 0.2)
 #alpha <- list(theta = 1, sigma = 0.5)
 
 #m1_bar = round(runif(1,0,m1), digits=0)
@@ -64,20 +64,19 @@ g_lambda = function(lambda, psi, m1_bar){
   return(val)
 }
 
-update_psi = function(lambda, psi, m1_bar){
-
+update_psi = function(lambda, psi, m1_bar, accept){
   psi_s = rnorm(1, psi, alpha$sigma)
   
   A = min(1,exp(f_psi(lambda,psi_s,m1_bar)  
                 - f_psi(lambda,psi,m1_bar) ))
   if(runif(1) < A){
     psi = psi_s
-
+    accept = accept + 1
   }
-  return(psi)
+  return(list(a = psi, b = accept))
 }
 
-update_lambda = function(lambda, psi, m1_bar){
+update_lambda = function(lambda, psi, m1_bar, accept){
 
   lambda_s = rnorm(1, lambda, alpha$theta)
   
@@ -85,8 +84,9 @@ update_lambda = function(lambda, psi, m1_bar){
                 - g_lambda(lambda, psi, m1_bar) ))
   if(runif(1) < A){
     lambda = lambda_s
+    accept = accept + 1
   }
-  return(lambda)
+  return(list(a = lambda, b = accept))
 }
 
 ######## FUNZIONE M1_BAR ########
@@ -113,12 +113,14 @@ up_m1_bar = function(lambda, psi, m1, m1_bar, beta){
 }
 
 
-iters = 2000
+iters = 8000
 
 sigma_vec = numeric(iters)
 theta_vec = numeric(iters)
 beta_vec = numeric(iters)
 m1_vec = numeric(iters)
+psi_vec = numeric(iters)
+lambda_vec = numeric(iters)
 X = numeric(m1)
 
 psi_old = psi
@@ -126,13 +128,21 @@ lambda_old = lambda
 beta_old = beta
 m1_bar_old = m1_bar
 
+accept_theta = 0
+accept_sigma = 0
 
 for(i in 1:iters){
   
-  psi_new = update_psi(lambda_old, psi_old, m1_bar_old)
+  new = list(a, b)
+  new = update_psi(lambda_old, psi_old, m1_bar_old, accept_theta)
+  psi_new = new$a
+  accept_theta = new$b
   sigma_new = exp(psi_new)/(1+exp(psi_new))
   
-  lambda_new = update_lambda(lambda_old, psi_new, m1_bar_old)
+  new = list(a, b)
+  new = update_lambda(lambda_old, psi_new, m1_bar_old, accept_sigma)
+  lambda_new = new$a
+  accept_sigma = new$b
   theta_new = exp(lambda_new)
   
   #beta_new = exp(dbeta(beta_old,a$beta + n - m1_bar, b$beta + m1_bar_old, log=TRUE) + lbeta(a$beta + n - m1_bar_old,b$beta + m1_bar_old)-lbeta(a$beta,b$beta))
@@ -146,6 +156,8 @@ for(i in 1:iters){
   
   sigma_vec[i] = sigma_new
   theta_vec[i] = theta_new
+  psi_vec[i] = psi_new
+  lambda_vec[i] = lambda_new
   beta_vec[i] = beta_new
   m1_vec[i] = m1_bar_new
   
@@ -156,65 +168,19 @@ for(i in 1:iters){
   
 }
 
+print(accept_theta/iters)
+print(accept_sigma/iters)
+
 
 par(mfrow=c(2,2))
-plot(sigma_vec, main="sigma value", type="l")
-plot(theta_vec, main= "theta value", type="l" )
-plot(beta_vec, main = "beta value", type="l")
-plot(m1_vec, main="m1_bar value", type="l")
+plot(sigma_vec, main=paste("sigma value, mean = ", mean(sigma_vec)), type="l")
+plot(theta_vec, main=paste("theta value, mean = ", mean(theta_vec)), type="l" )
+plot(psi_vec, main=paste("psi value, mean = ", mean(psi_vec)), type="l")
+plot(lambda_vec, main=paste("lambda value, mean = ", mean(lambda_vec)), type="l" )
+#plot(beta_vec, main=paste("beta value, mean = ", mean(beta_vec)), type="l")
+#plot(m1_vec, main=paste("m1_bar value, mean = ", mean(m1_vec)), type="l")
 
 mean(sigma_vec)
 mean(theta_vec)
 mean(beta_vec)
 mean(m1_vec)
-
-
-
-
-
-
-
-hist(sigma_vec, 50)
-hist(theta_vec, 50)
-
-x <- rgamma(1000, shape = 1, rate = 5)
-den <- density(x)
-dat <- data.frame(x = den$x, y = den$y)
-ggplot(data = dat, aes(x = x, y = y)) + 
-  geom_point(size = 1) +
-  theme_classic()
-
-
-hist(theta_vec, 50, prob=T)
-val = seq(50,120,0.1)
-points(val,dgamma(val, shape = 2, scale = 0.02),type='l',col='red')
-
-
-x_sigma <- dgamma(1000, shape = 1, rate = 5)
-den <- density(x_sigma)
-dat <- data.frame(x_sigma = den$x, y = den$y)
-
-val = seq(0.1,1,0.001)
-val_dat = seq(0.1, 1, 1/512)
-
-par(mfrow=c(1,2))
-plot(dat$x_sigma, dat$y)
-hist(sigma_vec, 50, prob=T)
-points(dat$x_sigma,dat$y,type='l',col='red')
-
-
-ggplot(data = dat, aes(x = x_sigma, y = y)) + 
-  geom_point(size = 1) +
-  theme_classic()
-
-points(val,rgamma(val, shape = 1, scale = 1),type='l',col='red')
-
-
-mean(sigma_vec)
-mean(theta_vec)
-mean(beta_vec)
-mean(m1_vec)
-
-param = list(sigma=sigma,theta=theta,beta=beta,m1_bar=m1_bar)
-param
-
