@@ -172,13 +172,13 @@ print(accept_theta/iters)
 print(accept_sigma/iters)
 
 
-par(mfrow=c(2,2))
+par(mfrow=c(2,3))
 plot(sigma_vec, main=paste("sigma value, mean = ", mean(sigma_vec)), type="l")
 plot(theta_vec, main=paste("theta value, mean = ", mean(theta_vec)), type="l" )
 plot(psi_vec, main=paste("psi value, mean = ", mean(psi_vec)), type="l")
 plot(lambda_vec, main=paste("lambda value, mean = ", mean(lambda_vec)), type="l" )
-#plot(beta_vec, main=paste("beta value, mean = ", mean(beta_vec)), type="l")
-#plot(m1_vec, main=paste("m1_bar value, mean = ", mean(m1_vec)), type="l")
+plot(beta_vec, main=paste("beta value, mean = ", mean(beta_vec)), type="l")
+plot(m1_vec, main=paste("m1_bar value, mean = ", mean(m1_vec)), type="l")
 
 mean(sigma_vec)
 mean(theta_vec)
