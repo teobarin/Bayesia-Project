@@ -108,7 +108,7 @@ for(j in 0:9){
   N_k = sort(N_k)
   k = length(N_k)
   
-  iters = 5000
+  iters = 8000
   
   sigma_vec = numeric(iters)
   theta_vec = numeric(iters)
@@ -162,7 +162,7 @@ for(j in 0:9){
   sigma_values[j+1] = mean(sigma_vec)
   theta_values[j+1] = mean(theta_vec)
   beta_values[j+1] = mean(beta_vec)
-  m1_bar_values[j+1] = mean(m1_bar_vec)
+  m1_bar_values[j+1] = mean(m1_vec)
   
 }
 
@@ -172,13 +172,16 @@ theta_values
 ################################################################################
 
 par(mfrow=c(2,5))
-
 for(j in 0:9){
   
-  #plot(sigma_list[[j+1]], main=paste("sigma", j, "-> mean = ", signif(sigma_values[j+1], digits = 3)), type="l")
-  plot(theta_list[[j+1]], main=paste("theta", j, " -> mean = ", trunc(theta_values[j+1])), type="l")
-  #plot(beta_list[[j+1]], main=paste("beta", j, " -> mean = ", signif(beta_values[j+1], digits = 3)), type="l")
-  #plot(m1_bar_list[[j+1]], main=paste("m1_bar", j, " -> mean = ", trunc(m1_bar_values[j+1])), type="l")
+  #plot(sigma_list[[j+1]], main=paste("sigma", j, "-> mean = ", signif(sigma_values[j+1], digits = 3)), ylab = "sigma", ylim = c(0.10,0.35),  type="l")
+  #abline(h = sigma_values[j+1], col = "red", , lwd = 2, lty = 2)
+  #plot(theta_list[[j+1]], main=paste("theta", j, " -> mean = ", trunc(theta_values[j+1])), ylab = "theta", ylim = c(60,180), type="l")
+  #abline(h = theta_values[j+1], col = "red", , lwd = 2, lty = 2)
+  #plot(beta_list[[j+1]], main=paste("beta", j, " -> mean = ", signif(beta_values[j+1], digits = 3)), ylab=  "beta", ylim = c(0.94,0.965), type="l")
+  #abline(h = beta_values[j+1], col = "red", , lwd = 2, lty = 2)
+  plot(m1_bar_list[[j+1]], main=paste("m1_bar", j, " -> mean = ", trunc(m1_bar_values[j+1])), ylab = "m1_bar", ylim = c(1000,1400), type="l")
+  abline(h = m1_bar_values[j+1], col = "red", , lwd = 2, lty = 2)
   
 }
 
