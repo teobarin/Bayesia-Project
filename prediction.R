@@ -1,6 +1,9 @@
 library(dplyr)
 library(readr)
 
+# - it: numbers of time that we computer m1_pred and k_pred
+# - p : percentage of data that we remove from dataset and we use for validation
+
 load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/freq.RData")
 load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/functions.RData")
 
@@ -10,7 +13,7 @@ beta_par = list(a=1,b=1)
 alpha = list(psi = 0.1, lambda = 0.1)
 iters = 10000
 
-it=1000
+it=100
 p = 0.2
 m = round(p*sum(freq),digits=0)
 data = extract_data(freq)
