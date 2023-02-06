@@ -2,11 +2,11 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 
-load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/pred_100.RData")
+load("C:/.../pred_100.RData")
 
 col <- c("dodgerblue", "darkorange2","gray48")
 
-########### log-log ##############
+### plot from which we can understand if data are contaminated 
 n = sum(freq)
 M_l <- as.numeric(table(factor(freq, levels = 1:n))) # numero di cluster con frequenza l=1,...,n
 idx <- 1:(which.min(M_l)+30) # which(M_l > 0)
@@ -46,7 +46,9 @@ p <- ggplot(data.frame(x = idx[M_l != 0], y = M_l[idx[M_l != 0]]), aes(x = x, y 
   ylab(expression(m[j] * ' (log-scale)'))
 
 p
+
 ################################################################################
+# plot containing the estimation of sigma generated with cPY model and PY model
 d_sigma = data.frame(x = d$sigma, y = d_nc$sigma_nc)
 
 p_sigma <- ggplot(d_sigma, aes(x = x)) +
@@ -65,7 +67,9 @@ p_sigma <- ggplot(d_sigma, aes(x = x)) +
   theme(plot.title = element_text(size = 20,hjust=0.5))
 
 p_sigma
+
 ################################################################################
+# plot containing the estimation of theta generated with cPY model and PY model
 d_theta = data.frame(x = d$theta, y = d_nc$theta_nc)
 
 p_theta <- ggplot(d_theta, aes(x = x)) +
@@ -84,7 +88,9 @@ p_theta <- ggplot(d_theta, aes(x = x)) +
   theme(plot.title = element_text(size = 20,hjust=0.5))
 
 p_theta
+
 ################################################################################
+# plot containing the prediction of m1_bar generated with cPY model and PY model
 d_m1 = data.frame(x = m1_pred_vec, y = m1_pred_nc_vec)
 
 p_m1 <- ggplot(d_m1, aes(x = x)) +
@@ -103,7 +109,9 @@ p_m1 <- ggplot(d_m1, aes(x = x)) +
   theme(plot.title = element_text(size = 15,hjust=0.5))
 
 p_m1
+
 ################################################################################
+# plot containing the prediction of the number of cluster generated with cPY model and PY model
 d_k = data.frame(x = k_pred_vec, y = k_pred_nc_vec)
 
 p_k <- ggplot(d_k, aes(x = x)) +
