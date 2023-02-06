@@ -1,14 +1,14 @@
 library(dplyr)
 library(readr)
 
-# - freq.RData is the file containing the frequencies of the clusters of our dataset
-# - functions.RData is the file containing all functions that we use to estimate parameters
-# - sigma_par is a list containing the parameters of the prior distribution of sigma
-# - theta_par is a list containing the parameters of the prior distribution of theta
-# - beta_par is a list containing the parameters of the prior distribution of beta
-# - alpha is a list containing the variance of the proposal distribution that we use
+# - freq.RData: file containing the frequencies of the clusters of our dataset
+# - functions.RData: file containing all functions that we use to estimate parameters
+# - sigma_par: list containing the parameters of the prior distribution of sigma
+# - theta_par: list containing the parameters of the prior distribution of theta
+# - beta_par: list containing the parameters of the prior distribution of beta
+# - alpha: list containing the variance of the proposal distribution that we use
 #   in the Metropolis-Hastings to update sigma and theta
-# - iters are the number of iteration of our sampling
+# - iters: numbers of iteration of our sampling
 
 load("C:/.../freq.RData")
 load("C:/.../functions.RData")
