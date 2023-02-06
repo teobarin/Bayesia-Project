@@ -9,10 +9,6 @@ library(readr)
 # - alpha is a list containing the variance of the proposal distribution that we use
 #   in the Metropolis-Hastings to update sigma and theta
 # - iters are the number of iteration of our sampling
-# - cPY_freq is the function that returned the vectors containing the values 
-#   of the parameters sampled with the contaminated Pitma-Yor updating functions
-# - PY_freq is the function that returned the vectors containing the values 
-#   of the parameters sampled with the Pitma-Yor updating functions   
 
 load("C:/.../freq.RData")
 load("C:/.../functions.RData")
