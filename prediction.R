@@ -12,8 +12,8 @@ library(readr)
 # - it: numbers of time that we computer m1_pred and k_pred
 # - p : percentage of data that we remove from dataset and we use for validation
 
-load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/freq.RData")
-load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/functions.RData")
+load("C:/.../freq.RData")
+load("C:/.../functions.RData")
 
 sigma_par = list(a=1,b=1)
 theta_par = list(a=2,b=0.02)
