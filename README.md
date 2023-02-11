@@ -1,2 +1,3 @@
-# Bayesia-Project
-bay 
+# Contaminated Model for Species Sampling
+# Barin, Giorgi, Grignani, Laurenti Argento, Quadri, Tracanella
+.................
