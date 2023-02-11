@@ -1,3 +1,3 @@
 # Contaminated Model for Species Sampling
-# Barin, Giorgi, Grignani, Laurenti Argento, Quadri, Tracanella
+Barin, Giorgi, Grignani, Laurenti Argento, Quadri, Tracanella
 .................
