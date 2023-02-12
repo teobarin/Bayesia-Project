@@ -2,8 +2,8 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 
-load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/pred_250.RData")
-load("C:/Users/marco/Desktop/Univerisità/Bayesian Statistics/Progetto/par_est.RData")
+load("C:/.../pred_250.RData")
+load("C:/.../par_est.RData")
 
 col <- c("dodgerblue", "darkorange2","gray48")
 
