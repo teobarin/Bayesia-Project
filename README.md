@@ -6,6 +6,13 @@ Brief explanation of the files present:
 - par_estimates.R is the code that we use to estimate the parameters for both type of model
 - prediction.R is the code that we use to make prediction on our dataset
 - plot.R ise the code that we use to generate all our plots
-- All files .RData contains our results
+
+Files .RData contains our results:
+- freq.RData contains the frequencies of the real dataset that we use for our analysis
+- functions.RData contains all our functions
+- par_est.RData contains the parameters estimation values
+- pred_250.RData contains the results of the prediction over 250 different shuffles of the dataset
+
+The PDF files are the documentation that we use for the project
 
 
