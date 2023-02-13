@@ -15,4 +15,4 @@ Files .RData contains our results:
 
 The PDF files are the documentation that we use for the project
 
-
+Barin, Giorgi, Grignani, Laurenti, Quadri, Tracanella
