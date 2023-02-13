@@ -14,5 +14,3 @@ Files .RData contains our results:
 - pred_250.RData contains the results of the prediction over 250 different shuffles of the dataset
 
 The PDF files are the documentation that we use for the project
-
-Barin, Giorgi, Grignani, Laurenti, Quadri, Tracanella
